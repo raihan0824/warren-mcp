@@ -49,7 +49,7 @@ async def get_spend_by_merchant(
                 COALESCE(SUM(spend_total_rp), 0) as spend_total_rp,
                 COALESCE(SUM(tx_count), 0) as tx_count
             FROM v_spend_by_merchant_daily
-            WHERE date >= $1::date AND date <= $2::date
+            WHERE date_jakarta >= $1::date AND date_jakarta <= $2::date
             GROUP BY merchant
             ORDER BY spend_total_rp DESC
             LIMIT $3

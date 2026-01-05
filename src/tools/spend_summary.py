@@ -42,26 +42,15 @@ async def get_spend_summary(
     try:
         start_ts, end_ts = get_time_range(range)
 
-        # Use appropriate view based on range
-        if range in ("today", "yesterday"):
-            query = """
-                SELECT 
-                    COALESCE(SUM(spend_total_rp), 0) as spend_total_rp,
-                    COALESCE(SUM(tx_count), 0) as tx_count
-                FROM v_spend_daily
-                WHERE date >= $1::date AND date <= $2::date
-            """
-            result = await db.fetch_one(query, start_ts.date(), end_ts.date())
-        else:
-            # For week/month ranges, aggregate from daily view
-            query = """
-                SELECT 
-                    COALESCE(SUM(spend_total_rp), 0) as spend_total_rp,
-                    COALESCE(SUM(tx_count), 0) as tx_count
-                FROM v_spend_daily
-                WHERE date >= $1::date AND date <= $2::date
-            """
-            result = await db.fetch_one(query, start_ts.date(), end_ts.date())
+        # Use daily view for all ranges
+        query = """
+            SELECT 
+                COALESCE(SUM(spend_total_rp), 0) as spend_total_rp,
+                COALESCE(SUM(tx_count), 0) as tx_count
+            FROM v_spend_daily
+            WHERE date_jakarta >= $1::date AND date_jakarta <= $2::date
+        """
+        result = await db.fetch_one(query, start_ts.date(), end_ts.date())
 
         if result:
             return SpendSummaryOutput(
