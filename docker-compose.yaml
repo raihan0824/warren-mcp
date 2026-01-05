@@ -1,0 +1,10 @@
+services:
+  warren-mcp:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:HsghwQpzYfnYsHTM3KiRqaRJhbHmqpz4F5nYv2DEGF8=@localhost:5432/graham
+      - HOST=0.0.0.0
+      - PORT=8000
+    restart: unless-stopped
