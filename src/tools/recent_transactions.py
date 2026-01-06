@@ -16,6 +16,7 @@ class TransactionItem(BaseModel):
     merchant: str = Field(description="Merchant name")
     category_code: str = Field(description="Category code")
     total_rp: float = Field(description="Transaction amount in Rupiah")
+    notes: str | None = Field(default=None, description="Transaction notes/details")
 
 
 class RecentTransactionsOutput(BaseModel):
@@ -42,7 +43,8 @@ async def get_recent_transactions(
                 datetime_jakarta,
                 merchant,
                 category_code,
-                total_rp
+                total_rp,
+                notes
             FROM v_tx_clean
             ORDER BY datetime_jakarta DESC
             LIMIT $1
@@ -55,6 +57,7 @@ async def get_recent_transactions(
                 merchant=row["merchant"],
                 category_code=row["category_code"],
                 total_rp=float(row["total_rp"]),
+                notes=row["notes"],
             )
             for row in rows
         ]
